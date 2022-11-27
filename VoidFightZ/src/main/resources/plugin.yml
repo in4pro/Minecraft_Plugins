@@ -1,0 +1,4 @@
+name: VoidFightZ
+version: '${project.version}'
+main: me.in4.voidfightz.VoidFightZ
+api-version: 1.18

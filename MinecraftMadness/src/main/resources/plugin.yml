@@ -1,0 +1,8 @@
+name: MinecraftMadness
+version: '${project.version}'
+main: me.in4.minecraftmadness.MinecraftMadness
+api-version: 1.18
+commands:
+  pizdets:
+    description: starts the madness
+    usage: /<command>

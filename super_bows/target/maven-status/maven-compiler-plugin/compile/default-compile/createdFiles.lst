@@ -1,0 +1,7 @@
+me/in4/bows/events/SuperJumpBowEvent.class
+me/in4/bows/events/TNTBowEvent.class
+me/in4/bows/events/DashBowEvent.class
+me/in4/bows/events/XRayBowEvent.class
+me/in4/bows/commands/BowsCommand.class
+me/in4/bows/events/EnchantBowEvent.class
+me/in4/bows/Bows.class

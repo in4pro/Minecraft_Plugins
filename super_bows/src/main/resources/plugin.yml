@@ -1,0 +1,8 @@
+name: Bows
+version: '${project.version}'
+main: me.in4.bows.Bows
+api-version: 1.18
+commands:
+  bows:
+    description: Lets you craft op bows
+    usage: /<command>
