@@ -1,0 +1,8 @@
+name: BedrockGame
+version: '${project.version}'
+main: me.in4.bedrockgame.BedrockGame
+api-version: 1.18
+commands:
+    start:
+      description: starts the game
+      usage: /<command>

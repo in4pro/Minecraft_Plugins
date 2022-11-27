@@ -1,0 +1,7 @@
+me/in4/bedrockgame/Events/BedrockBootsEvent.class
+me/in4/bedrockgame/Events/BedrockDropEvent.class
+me/in4/bedrockgame/Events/BedrockSword.class
+me/in4/bedrockgame/Events/BedrockPickaxeEvent.class
+me/in4/bedrockgame/classes/ItemManager.class
+me/in4/bedrockgame/BedrockGame.class
+me/in4/bedrockgame/Commands/Command.class
