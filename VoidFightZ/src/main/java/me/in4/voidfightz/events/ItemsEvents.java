@@ -1,9 +1,7 @@
 package me.in4.voidfightz.events;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import me.in4.voidfightz.WorldsRunClass;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
@@ -12,10 +10,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.*;
+import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.inventory.ItemStack;
@@ -24,9 +21,15 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import java.io.File;
 import java.util.*;
 
-import static me.in4.voidfightz.VoidFightZ.spawn_loc;
+import static me.in4.voidfightz.PotionOfLevitation.potion_of_levitation;
+import static me.in4.voidfightz.VoidFightZ.plugin;
+import static me.in4.voidfightz.WorldsRunClass.spawn_loc;
+import static me.in4.voidfightz.WorldsRunClass.world1;
+import static me.in4.voidfightz.commands.QueueCommand.main_location;
+
 
 public class ItemsEvents implements Listener {
 
@@ -72,21 +75,21 @@ public class ItemsEvents implements Listener {
                 if (Arrays.asList(lucky_items).contains(random_item)) {
                     ItemStack r_lucky_item = new ItemStack(random_item, 1);
                     if (r_lucky_item.getType().equals(Material.BEDROCK) || r_lucky_item.getType().equals(Material.REDSTONE_BLOCK)) {
-                        for (int cnt = 0; cnt <= 64; cnt++) {
+                        for (int cnt = 0; cnt <= 62; cnt++) {
                             loc.getWorld().dropItemNaturally(loc, r_lucky_item);
                         }
                     } else if (r_lucky_item.getType().equals(Material.YELLOW_WOOL)) {
                         for (int cnt = 0; cnt <= 36; cnt++) {
                             loc.getWorld().dropItemNaturally(loc, r_lucky_item);
                         }
-                    } else if (r_lucky_item.getType().equals(Material.ENDER_PEARL) || r_lucky_item.getType().equals(Material.SLIME_BLOCK)) {
+                    } else if (r_lucky_item.getType().equals(Material.SLIME_BLOCK)) {
                         for (int cnt = 0; cnt <= 8; cnt++) {
                             loc.getWorld().dropItemNaturally(loc, r_lucky_item);
                         }
                     } else if (r_lucky_item.getType().equals(Material.ARROW) || r_lucky_item.getType().equals(Material.HAY_BLOCK) ||
                             r_lucky_item.getType().equals(Material.ACACIA_DOOR) || r_lucky_item.getType().equals(Material.OAK_TRAPDOOR) ||
                             r_lucky_item.getType().equals(Material.IRON_DOOR) || r_lucky_item.getType().equals(Material.BARRIER) ||
-                            r_lucky_item.getType().equals(Material.BARREL) || r_lucky_item.getType().equals(Material.END_PORTAL_FRAME) ||
+                            r_lucky_item.getType().equals(Material.BARREL) ||
                             r_lucky_item.getType().equals(Material.OBSIDIAN) || r_lucky_item.getType().equals(Material.EXPERIENCE_BOTTLE) ||
                             r_lucky_item.getType().equals(Material.AMETHYST_BLOCK)) {
                         for (int cnt = 0; cnt <= 14; cnt++) {
@@ -162,13 +165,9 @@ public class ItemsEvents implements Listener {
                 String occurrence = random_occurrences[random.nextInt(random_occurrences.length)];
                 if (Arrays.asList(random_occurrences).contains(occurrence)) {
                     if (occurrence.equalsIgnoreCase("summon lightning")) {
-                        for (Player players : Bukkit.getOnlinePlayers()) {
-                            if (!(players.getWorld().getName().equalsIgnoreCase("VoidWorld"))) {
-                                return;
-                            } else {
-                                players.getWorld().strikeLightning(players.getLocation());
+                        for (Player players : world1.getPlayers()) {
+                            players.getWorld().strikeLightning(players.getLocation());
 
-                            }
                         }
                     } else if (occurrence.equalsIgnoreCase("make an arrow rain")) {
                         int x = player.getWorld().getWorldBorder().getCenter().getBlockX();
@@ -228,8 +227,8 @@ public class ItemsEvents implements Listener {
                         if (player.getInventory().contains(item)) {
                             return;
                         } else {
-                            player.getInventory().addItem(item);
                             this.bridge_basalts.add(item);
+                            world1.dropItemNaturally(loc, item);
                         }
                     } else if (occurrence.equalsIgnoreCase("give player a fly boat")) {
                         ItemStack item = new ItemStack(Material.OAK_BOAT, 1);
@@ -237,7 +236,7 @@ public class ItemsEvents implements Listener {
                         meta.setDisplayName(ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Flying Boat");
                         item.setItemMeta(meta);
                         this.flying_boats.add(item);
-                        player.getInventory().addItem(item);
+                        world1.dropItemNaturally(loc, item);
                     }
                     else if (occurrence.equalsIgnoreCase("make a portal")) {
                         int x = player.getLocation().getBlockX() - 1;
@@ -322,6 +321,17 @@ public class ItemsEvents implements Listener {
             }
         }
     }
+    @EventHandler
+    public void itemSpawned (ItemSpawnEvent event) {
+        if (this.flying_boats.contains(event.getEntity().getItemStack())) {
+            event.getEntity().setCustomName(ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Flying Boat");
+            event.getEntity().setCustomNameVisible(true);
+        }
+        else if (this.bridge_basalts.contains(event.getEntity().getItemStack())) {
+            event.getEntity().setCustomName(ChatColor.YELLOW + "" + ChatColor.BOLD + "Bridge Hay Bale");
+            event.getEntity().setCustomNameVisible(true);
+        }
+    }
 
     @EventHandler
     public void playerWasMoving (PlayerMoveEvent event) {
@@ -337,6 +347,7 @@ public class ItemsEvents implements Listener {
                 Location block_loc = (Location) this.portals_arrays1.get(location).get(cnt);
                 Material type = block_loc.getBlock().getType();
                 if (type != Material.DIRT) {
+                    player.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "The portal is broken! Repair it using correct blocks, by placing them in a shape similar to a nether portal.");
                     this.check_block = false;
                 }
 
@@ -345,6 +356,7 @@ public class ItemsEvents implements Listener {
                 Location block_loc = (Location) this.portals_arrays2.get(location).get(cnt);
                 Material type = block_loc.getBlock().getType();
                 if (type != Material.STONE) {
+                    player.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "The portal is broken! Repair it using correct blocks, by placing them in a shape similar to a nether portal.");
                     this.check_block = false;
                 }
             }
@@ -374,7 +386,10 @@ public class ItemsEvents implements Listener {
         else {
             Location location = player.getLocation();
             Location block_loc = new Location(player.getWorld(), location.getBlockX(), location.getBlockY() - 1, location.getBlockZ());
+            //Location block_loc2 = new Location(player.getWorld(), location.getDirection().getBlockX() + 1, location.getBlockY() - 1, location.getDirection().getBlockZ() + 1);
+
             Block block = block_loc.getBlock();
+          //  Block block2 = block_loc2.getBlock();
             if (!(block.getType().equals(Material.AIR))) {
                 if (this.basalts_time.containsKey(bridge_basalt.getItemMeta())) {
                     this.basalts_time.remove(bridge_basalt.getItemMeta(), System.currentTimeMillis());
@@ -386,22 +401,24 @@ public class ItemsEvents implements Listener {
                     this.basalts_time.put(bridge_basalt.getItemMeta(), System.currentTimeMillis());
                 }
                 else {
-                    long timeElapsed = (System.currentTimeMillis() - this.basalts_time.get(bridge_basalt.getItemMeta())) / 1000;
-                    long timeLeft = 30 - timeElapsed;
-                    if (timeElapsed <= 30) {
-                        block.setType(Material.HAY_BLOCK);
-                        if (timeLeft <= 5 && timeLeft >= 0) {
-                            if ( !(this.lastprint.containsKey(player.getUniqueId())) || (System.currentTimeMillis() - this.lastprint.get(player.getUniqueId()) >= 1000) ) {
-                                player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "YOUR BRIDGE HAY BALE WILL DISAPPEAR IN " + timeLeft +
-                                        " SECONDS!!!");
-                                this.lastprint.put(player.getUniqueId(), System.currentTimeMillis());
+                    if (player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.YELLOW + "" + ChatColor.BOLD + "Bridge Hay Bale")) {
+                        long timeElapsed = (System.currentTimeMillis() - this.basalts_time.get(bridge_basalt.getItemMeta())) / 1000;
+                        long timeLeft = 30 - timeElapsed;
+                        if (timeElapsed <= 30) {
+                            block.setType(Material.HAY_BLOCK);
+                            //block2.setType(Material.HAY_BLOCK);
+                            if (timeLeft <= 5 && timeLeft >= 0) {
+                                if (!(this.lastprint.containsKey(player.getUniqueId())) || (System.currentTimeMillis() - this.lastprint.get(player.getUniqueId()) >= 1000)) {
+                                    player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "YOUR BRIDGE HAY BALE WILL DISAPPEAR IN " + timeLeft +
+                                            " SECONDS!!!");
+                                    this.lastprint.put(player.getUniqueId(), System.currentTimeMillis());
+                                }
                             }
+                        } else {
+                            player.getInventory().remove(player.getInventory().getItemInMainHand());
+                            this.basalts_time.remove(bridge_basalt.getItemMeta());
+                            this.bridge_basalts.remove(bridge_basalt);
                         }
-                    }
-                    else {
-                        player.getInventory().remove(player.getInventory().getItemInMainHand());
-                        this.basalts_time.remove(bridge_basalt.getItemMeta());
-                        this.bridge_basalts.remove(bridge_basalt);
                     }
                 }
 
@@ -412,11 +429,15 @@ public class ItemsEvents implements Listener {
     @EventHandler
     public void move(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-        if (!(this.jumping_boots.contains(player.getEquipment().getBoots()))) {
-            player.removePotionEffect(PotionEffectType.JUMP);
+        if (player.getEquipment().getBoots() != null) {
+            if (!(player.getEquipment().getBoots().getItemMeta().getDisplayName().equals(ChatColor.BLUE + "" + ChatColor.BOLD + "Jumping Boots"))) {
+                player.removePotionEffect(PotionEffectType.JUMP);
+            } else {
+                player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, 2));
+            }
         }
-        else if (this.jumping_boots.contains(player.getEquipment().getBoots())) {
-            player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, 2));
+        else {
+            player.removePotionEffect(PotionEffectType.JUMP);
         }
     }
 
@@ -458,7 +479,7 @@ public class ItemsEvents implements Listener {
         }
         else {
             Location entity_location = entity.getLocation();
-            for (int cnt = 0; cnt <= 3; cnt++) {
+            for (int cnt = 0; cnt <= 2; cnt++) {
                 entity.getWorld().dropItemNaturally(entity_location, new ItemStack(Material.END_PORTAL_FRAME));
             }
         }
@@ -502,12 +523,11 @@ public class ItemsEvents implements Listener {
         if (entity.getName() == null) {
             return;
         }
-        else if (!(entity.getName().equals(ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "Liferuiner/leader to victory...") ||
-        entity.getName().equals(ChatColor.YELLOW + "" + ChatColor.BOLD + "Liferuiner/leader to victory..."))) {
+        else if (!(entity.getName().equals(ChatColor.YELLOW + "" + ChatColor.BOLD + "Liferuiner/leader to victory..."))) {
             return;
         }
         else {
-            for (int cnt = 0; cnt <= 3; cnt++) {
+            for (int cnt = 0; cnt <= 2; cnt++) {
                 entity.getWorld().dropItemNaturally(entity.getLocation(), new ItemStack(Material.BLAZE_ROD));
             }
         }
@@ -519,10 +539,55 @@ public class ItemsEvents implements Listener {
         if (!(entity.getType().equals(EntityType.ENDERMAN))) {
             return;
         }
+        else if (!(entity.getName().equals(ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "Liferuiner/leader to victory..."))) {
+            return;
+        }
         else {
-            for (int cnt = 0; cnt <= 3; cnt++) {
+            for (int cnt = 0; cnt <= 2; cnt++) {
                 entity.getWorld().dropItemNaturally(entity.getLocation(), new ItemStack(Material.ENDER_PEARL));
             }
+        }
+    }
+
+    @EventHandler
+    public void playerGotIntoTheEnd (PlayerTeleportEvent event) {
+        if (event.getCause().equals(PlayerTeleportEvent.TeleportCause.END_PORTAL)) {
+            for (Player player : world1.getPlayers()) {
+                player.sendMessage(ChatColor.GRAY + "" + ChatColor.BOLD + "VoidFightZ >>>    " + ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + ChatColor.MAGIC + "POSOSI " +
+                        ChatColor.GOLD + "" + ChatColor.BOLD + "" + event.getPlayer().getName() + " HAS WON THE GAME!! LETS FUCKING GOOOOOOOOO!!!!" +
+                        ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + ChatColor.MAGIC + " ISOSOP");
+                player.teleport(new Location(main_location.getWorld(), main_location.getX(), main_location.getY(), main_location.getZ()));
+                Bukkit.unloadWorld("VoidWorld", false);
+                new RunClass(1301, 5).runTaskLater(plugin, 1);
+                world1.getWorldFolder().deleteOnExit();
+                deleteWorld(world1.getWorldFolder());
+                player.getInventory().clear();
+                new WorldsRunClass().runTaskLater(plugin, 1);
+            }
+        }
+    }
+
+    @EventHandler
+    public void stopNether(PlayerPortalEvent event) {
+        if (event.getPlayer().getWorld().equals(world1)) {
+            if (event.getCause().equals(PlayerTeleportEvent.TeleportCause.NETHER_PORTAL)) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void playerDrankPotion (PlayerItemConsumeEvent event) {
+        if (event.getItem().equals(potion_of_levitation)) {
+            event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 400, 5));
+        }
+    }
+
+    @EventHandler
+    public void deathEvent (PlayerRespawnEvent event) {
+        if (Boolean.FALSE.equals(world1.getGameRuleValue(GameRule.KEEP_INVENTORY))) {
+            event.getPlayer().sendMessage(ChatColor.BOLD + "" + ChatColor.DARK_PURPLE + "You have been eliminated...");
+            event.getPlayer().setGameMode(GameMode.SPECTATOR);
         }
     }
 
@@ -531,6 +596,21 @@ public class ItemsEvents implements Listener {
         if (event.getBlock().equals(this.lucky_block)) {
             event.setCancelled(true);
         }
+    }
+
+    @EventHandler
+    public void breakingBlocks (BlockBreakEvent event) {
+        if (event.getBlock().getType().equals(Material.PLAYER_HEAD)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void placingBlocks (BlockPlaceEvent event) {
+        if (event.getBlockAgainst().getType().equals(Material.PLAYER_HEAD)) {
+            event.setBuild(false);
+        }
+
     }
 
     @EventHandler
@@ -603,6 +683,13 @@ public class ItemsEvents implements Listener {
     }
 
     @EventHandler
+    public void arrowHitTarget (ProjectileHitEvent event) {
+        if (event.getEntityType() == EntityType.ARROW && event.getEntity().getShooter() == null) {
+            event.getEntity().remove();
+        }
+    }
+
+    @EventHandler
     public void onExit (VehicleExitEvent event) {
         Vehicle vehicle = event.getVehicle();
         if (vehicle.getCustomName() == null) {
@@ -627,16 +714,16 @@ public class ItemsEvents implements Listener {
     }
 
     private Material[] lucky_items = new Material[] {
-            /*Material.NETHERITE_LEGGINGS, Material.NETHERITE_AXE, Material.DIAMOND_AXE, Material.DIAMOND_SWORD, Material.NETHERITE_BLOCK,
+            Material.NETHERITE_LEGGINGS, Material.NETHERITE_AXE, Material.DIAMOND_AXE, Material.DIAMOND_SWORD, Material.NETHERITE_BLOCK,
             Material.ENCHANTED_GOLDEN_APPLE, Material.IRON_AXE, Material.ANVIL, Material.TRIDENT, Material.NETHERITE_CHESTPLATE,
             Material.DIAMOND_BLOCK, Material.GOLDEN_SWORD, Material.SMITHING_TABLE, Material.CROSSBOW, Material.FISHING_ROD, Material.IRON_CHESTPLATE,
-            Material.WATER_BUCKET, Material.ENDER_PEARL, Material.BEDROCK, Material.ITEM_FRAME,
+            Material.WATER_BUCKET, Material.BEDROCK, Material.ITEM_FRAME,
             Material.REDSTONE_BLOCK, Material.YELLOW_WOOL, Material.ACACIA_BUTTON, Material.ARROW, Material.CHEST, Material.RAIL, Material.DIAMOND_HELMET,
-            Material.IRON_HELMET, Material.IRON_HOE, Material.HAY_BLOCK, Material.DEEPSLATE, Material.SLIME_SPAWN_EGG, Material.SLIME_BLOCK, Material.SADDLE,
+            Material.IRON_HELMET, Material.IRON_HOE, Material.DEEPSLATE, Material.SLIME_SPAWN_EGG, Material.SLIME_BLOCK, Material.SADDLE,
             Material.SKELETON_HORSE_SPAWN_EGG, Material.DRAGON_HEAD, Material.ELYTRA, Material.ACACIA_DOOR, Material.IRON_DOOR,
-            Material.OAK_TRAPDOOR, Material.BARRIER, Material.BARREL, Material.END_ROD, Material.SPAWNER, Material.RAW_IRON_BLOCK, Material.END_PORTAL_FRAME,
+            Material.OAK_TRAPDOOR, Material.BARRIER, Material.BARREL, Material.END_ROD, Material.SPAWNER, Material.RAW_IRON_BLOCK,
             Material.OBSIDIAN, Material.POWDER_SNOW_BUCKET, Material.AMETHYST_BLOCK, Material.CLOCK,
-            Material.TOTEM_OF_UNDYING, Material.GOLDEN_APPLE,*/ Material.FIRE_CHARGE, Material.IRON_BOOTS,
+            Material.TOTEM_OF_UNDYING, Material.GOLDEN_APPLE, Material.FIRE_CHARGE, Material.IRON_BOOTS,
     };
 
     private Material[] lucky_enchanted_items = new Material[] {
@@ -654,8 +741,8 @@ public class ItemsEvents implements Listener {
     ArrayList portals_locs = new ArrayList();
 
     private String[] random_occurrences = new String[] {
-            "summon lightning", "make an arrow rain", "build the rainbow penis", "spawn a tanky skeleton",
-            "spawn a wool bridge", "spawn a wool bridge", "give player a fly boat", "make a portal"
+            "spawn a wool bridge", "build the rainbow penis", "spawn a tanky skeleton", "make a portal",
+            "spawn a wool bridge", "give player a fly boat",
     };
 
     private Material[] armor = new Material[] {
@@ -695,6 +782,20 @@ public class ItemsEvents implements Listener {
             {0, 0, 0, 0, 1, 0, 0, 0, 0}
 
     };
+
+    public void deleteWorld(File path) {
+        if(path.exists()) {
+            File files[] = path.listFiles();
+            for(int i = 0; i < files.length; i++) {
+                if (files[i].isDirectory()) {
+                    deleteWorld(files[i]);
+                }
+                else {
+                    files[i].delete();
+                }
+            }
+        }
+    }
 
     private void portal_platform_loc(Location location) {
         int x = location.getBlockX();

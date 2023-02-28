@@ -1,4 +1,8 @@
 name: VoidFightZ
 version: '1.0-SNAPSHOT'
 main: me.in4.voidfightz.VoidFightZ
-api-version: 1.18
+api-version: 1.19
+commands:
+  voidfightz:
+    description: teleports you to the VoidWorld
+    usage: /<command>

@@ -13,10 +13,12 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.inventory.ItemStack;
@@ -27,7 +29,9 @@ import org.bukkit.util.Vector;
 
 import java.util.*;
 
-import static me.in4.voidfightz.VoidFightZ.spawn_loc;
+import static me.in4.voidfightz.WorldsRunClass.spawn_loc;
+import static me.in4.voidfightz.WorldsRunClass.world1;
+
 
 public class Kills implements Listener {
 
@@ -64,8 +68,6 @@ public class Kills implements Listener {
         if (!(slayer instanceof Player)) {
             return;
         } else {
-            player.sendMessage("shash");
-            slayer.sendMessage("jaj");
             int size = (int) player.getWorld().getWorldBorder().getSize();
             Random random = new Random();
             int random_array = arrays_types[random.nextInt(arrays_types.length)];
@@ -74,32 +76,33 @@ public class Kills implements Listener {
                 if (Arrays.asList(lucky_items).contains(random_item)) {
                     ItemStack r_lucky_item = new ItemStack(random_item, 1);
                     if (r_lucky_item.getType().equals(Material.BEDROCK) || r_lucky_item.getType().equals(Material.REDSTONE_BLOCK)) {
-                        for (int cnt = 0; cnt <= 64; cnt++) {
+                        for (int cnt = 0; cnt <= 62; cnt++) {
                             loc.getWorld().dropItemNaturally(loc, r_lucky_item);
                         }
                     } else if (r_lucky_item.getType().equals(Material.YELLOW_WOOL)) {
                         for (int cnt = 0; cnt <= 36; cnt++) {
                             loc.getWorld().dropItemNaturally(loc, r_lucky_item);
                         }
-                    } else if (r_lucky_item.getType().equals(Material.ENDER_PEARL) || r_lucky_item.getType().equals(Material.SLIME_BLOCK)) {
+                    } else if (r_lucky_item.getType().equals(Material.SLIME_BLOCK)) {
                         for (int cnt = 0; cnt <= 8; cnt++) {
                             loc.getWorld().dropItemNaturally(loc, r_lucky_item);
                         }
                     } else if (r_lucky_item.getType().equals(Material.ARROW) || r_lucky_item.getType().equals(Material.HAY_BLOCK) ||
                             r_lucky_item.getType().equals(Material.ACACIA_DOOR) || r_lucky_item.getType().equals(Material.OAK_TRAPDOOR) ||
                             r_lucky_item.getType().equals(Material.IRON_DOOR) || r_lucky_item.getType().equals(Material.BARRIER) ||
-                            r_lucky_item.getType().equals(Material.BARREL) || r_lucky_item.getType().equals(Material.END_PORTAL_FRAME) ||
+                            r_lucky_item.getType().equals(Material.BARREL) ||
                             r_lucky_item.getType().equals(Material.OBSIDIAN) || r_lucky_item.getType().equals(Material.EXPERIENCE_BOTTLE) ||
                             r_lucky_item.getType().equals(Material.AMETHYST_BLOCK)) {
                         for (int cnt = 0; cnt <= 14; cnt++) {
                             loc.getWorld().dropItemNaturally(loc, r_lucky_item);
                         }
-                    } else if (r_lucky_item.getType().equals(Material.SLIME_SPAWN_EGG) || r_lucky_item.getType().equals(Material.SKELETON_HORSE_SPAWN_EGG)
-                            || r_lucky_item.getType().equals(Material.END_PORTAL_FRAME)) {
+                    }
+                    else if (r_lucky_item.getType().equals(Material.SLIME_SPAWN_EGG) || r_lucky_item.getType().equals(Material.SKELETON_HORSE_SPAWN_EGG)) {
                         for (int cnt = 0; cnt <= 4; cnt++) {
                             loc.getWorld().dropItemNaturally(loc, r_lucky_item);
                         }
-                    } else if (r_lucky_item.getType().equals(Material.ELYTRA)) {
+                    }
+                    else if (r_lucky_item.getType().equals(Material.ELYTRA)) {
                         r_lucky_item.setDurability((short) 427);
                         loc.getWorld().dropItemNaturally(loc, r_lucky_item);
                         loc.getWorld().dropItemNaturally(loc, new ItemStack(Material.FIREWORK_ROCKET, 4));
@@ -164,22 +167,18 @@ public class Kills implements Listener {
                 String occurrence = random_occurrences[random.nextInt(random_occurrences.length)];
                 if (Arrays.asList(random_occurrences).contains(occurrence)) {
                     if (occurrence.equalsIgnoreCase("summon lightning")) {
-                        for (Player players : Bukkit.getOnlinePlayers()) {
-                            if (!(players.getWorld().getName().equalsIgnoreCase("VoidWorld"))) {
-                                return;
-                            } else {
-                                players.getWorld().strikeLightning(players.getLocation());
+                        for (Player players : world1.getPlayers()) {
+                            players.getWorld().strikeLightning(players.getLocation());
 
-                            }
                         }
                     } else if (occurrence.equalsIgnoreCase("make an arrow rain")) {
-                        int x = player.getWorld().getWorldBorder().getCenter().getBlockX();
-                        int z = player.getWorld().getWorldBorder().getCenter().getBlockZ();
-                        int point1 = (int) (player.getWorld().getWorldBorder().getSize() / -2);
-                        int point2 = (int) (player.getWorld().getWorldBorder().getSize() / 2);
+                        int x = slayer.getWorld().getWorldBorder().getCenter().getBlockX();
+                        int z = slayer.getWorld().getWorldBorder().getCenter().getBlockZ();
+                        int point1 = (int) (slayer.getWorld().getWorldBorder().getSize() / -2);
+                        int point2 = (int) (slayer.getWorld().getWorldBorder().getSize() / 2);
                         for (int dx = point1; dx <= point2; dx++) {
                             for (int dz = point1; dz <= point2; dz++) {
-                                Location delete_loc = new Location(player.getWorld(), x + dx, player.getLocation().getBlockY() + 64, z + dz);
+                                Location delete_loc = new Location(slayer.getWorld(), x + dx, slayer.getLocation().getBlockY() + 64, z + dz);
                                 int value = random.nextInt((100 - 1) + 1) + 1;
                                 if (value >= 75) {
                                     player.getWorld().spawnArrow(delete_loc, new Vector(0, -1, 0), 2, 0);
@@ -187,8 +186,8 @@ public class Kills implements Listener {
                             }
                         }
                     } else if (occurrence.equalsIgnoreCase("build the rainbow penis")) {
-                        int x = player.getLocation().getBlockX() - 1;
-                        int y = player.getLocation().getBlockY() + 2;
+                        int x = slayer.getLocation().getBlockX() - 1;
+                        int y = slayer.getLocation().getBlockY() + 2;
                         for (int dy = 0; dy < rainbow_dick.length; dy++) {
                             for (int dx = 0; dx < rainbow_dick[dy].length; dx++) {
                                 Location location = new Location(player.getWorld(), x + dx, y + dy, player.getLocation().getBlockZ());
@@ -213,7 +212,7 @@ public class Kills implements Listener {
                         }
                         player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "SUS");
                     } else if (occurrence.equalsIgnoreCase("spawn a tanky skeleton")) {
-                        Skeleton skeleton = (Skeleton) player.getWorld().spawnEntity(player.getLocation(), EntityType.SKELETON);
+                        Skeleton skeleton = (Skeleton) player.getWorld().spawnEntity(slayer.getLocation(), EntityType.SKELETON);
                         skeleton.getEquipment().setHelmet(skeleton_function(armor[0]));
                         skeleton.getEquipment().setChestplate(skeleton_function(armor[1]));
                         skeleton.getEquipment().setLeggings(skeleton_function(armor[2]));
@@ -227,11 +226,11 @@ public class Kills implements Listener {
                         item.addUnsafeEnchantment(Enchantment.LUCK, 1);
                         meta.setDisplayName(ChatColor.YELLOW + "" + ChatColor.BOLD + "Bridge Hay Bale");
                         item.setItemMeta(meta);
-                        if (player.getInventory().contains(item)) {
+                        if (((Player) slayer).getInventory().contains(item)) {
                             return;
                         } else {
-                            player.getInventory().addItem(item);
                             this.bridge_basalts.add(item);
+                            world1.dropItemNaturally(loc, item);
                         }
                     } else if (occurrence.equalsIgnoreCase("give player a fly boat")) {
                         ItemStack item = new ItemStack(Material.OAK_BOAT, 1);
@@ -239,19 +238,20 @@ public class Kills implements Listener {
                         meta.setDisplayName(ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Flying Boat");
                         item.setItemMeta(meta);
                         this.flying_boats.add(item);
-                        player.getInventory().addItem(item);
+                        world1.dropItemNaturally(loc, item);
                     }
                     else if (occurrence.equalsIgnoreCase("make a portal")) {
-                        int x = player.getLocation().getBlockX() - 1;
-                        int y = player.getLocation().getBlockY();
-                        int z = player.getLocation().getBlockZ() - 2;
-                        Location p_l = player.getLocation();
-                        Location location = new Location(player.getWorld(), x - 2, y - 1, z - 4);
+                        int x = slayer.getLocation().getBlockX() - 1;
+                        int y = slayer.getLocation().getBlockY();
+                        int z = slayer.getLocation().getBlockZ() - 2;
+                        Location p_l = slayer.getLocation();
+                        Location location = new Location(slayer.getWorld(), x - 2, y - 1, z - 4);
                         int x1 = spawn_loc.getBlockX();
                         int z1 = spawn_loc.getBlockZ();
                         int y1 = spawn_loc.getBlockY();
+
                         int value = random.nextInt(((size / 2) - (-size / 2)) + 1) + (-size / 2);
-                        Location location1 = new Location(player.getWorld(), x1 + value, y1 + value, z1 + value);
+                        Location location1 = new Location(slayer.getWorld(), x1 + value, y1 + value, z1 + value);
 
                         ArrayList portal_arrays1 = new ArrayList();
                         ArrayList portal_arrays2 = new ArrayList();
@@ -260,7 +260,7 @@ public class Kills implements Listener {
 
                         for (int dy = 0; dy < portal.length; dy++) {
                             for (int dx = 0; dx < portal[0].length; dx++) {
-                                Location location10 = new Location(player.getWorld(), x + dx, y + dy, z);
+                                Location location10 = new Location(slayer.getWorld(), x + dx, y + dy, z);
                                 Material material;
                                 if (portal[dy][dx] == 0) {
                                     material = Material.AIR;
@@ -291,11 +291,11 @@ public class Kills implements Listener {
                         int portal_y = location1.getBlockY();
                         int portal_z = location1.getBlockZ();
 
-                        Location second_location = new Location(player.getWorld(), portal_x - 2, portal_y - 1, portal_z - 4);
+                        Location second_location = new Location(slayer.getWorld(), portal_x - 2, portal_y - 1, portal_z - 4);
 
                         for (int dy = 0; dy < portal.length; dy++) {
                             for (int dx = 0; dx < portal[0].length; dx++) {
-                                Location location21 = new Location(player.getWorld(), portal_x + dx, portal_y + dy, portal_z);
+                                Location location21 = new Location(slayer.getWorld(), portal_x + dx, portal_y + dy, portal_z);
                                 Material material;
                                 if (portal[dy][dx] == 0) {
                                     material = Material.AIR;
@@ -324,9 +324,19 @@ public class Kills implements Listener {
             }
         }
     }
+    @EventHandler
+    public void BoatOrHayBaleSpawned (ItemSpawnEvent event) {
+        if (this.flying_boats.contains(event.getEntity().getItemStack())) {
+            event.getEntity().setCustomName(ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Flying Boat");
+        }
+        else if (this.flying_boats.contains(event.getEntity().getItemStack())) {
+            event.getEntity().setCustomName(ChatColor.YELLOW + "" + ChatColor.BOLD + "Bridge Hay Bale");
+        }
+    }
+
 
     @EventHandler
-    public void playerWasMoving (PlayerMoveEvent event) {
+    public void playerHasDecidedToMove (PlayerMoveEvent event) {
         Player player = event.getPlayer();
         Location loc = player.getLocation();
         Location location = new Location(player.getWorld(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
@@ -339,6 +349,7 @@ public class Kills implements Listener {
                 Location block_loc = (Location) this.portals_arrays1.get(location).get(cnt);
                 Material type = block_loc.getBlock().getType();
                 if (type != Material.DIRT) {
+                    player.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "The portal is broken! Repair it using correct blocks, by placing them in a shape similar to a nether portal.");
                     this.check_block = false;
                 }
 
@@ -347,7 +358,7 @@ public class Kills implements Listener {
                 Location block_loc = (Location) this.portals_arrays2.get(location).get(cnt);
                 Material type = block_loc.getBlock().getType();
                 if (type != Material.STONE) {
-                    player.sendMessage(type + "");
+                    player.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "The portal is broken! Repair it using correct blocks, by placing them in a shape similar to a nether portal.");
                     this.check_block = false;
                 }
             }
@@ -364,7 +375,7 @@ public class Kills implements Listener {
     }
 
     @EventHandler
-    public void playerMove (PlayerMoveEvent event) {
+    public void playerHaveDecidedToMove (PlayerMoveEvent event) {
         Player player = event.getPlayer();
         ItemStack bridge_basalt = player.getInventory().getItemInMainHand();
         if (bridge_basalt == null) {
@@ -377,7 +388,10 @@ public class Kills implements Listener {
         else {
             Location location = player.getLocation();
             Location block_loc = new Location(player.getWorld(), location.getBlockX(), location.getBlockY() - 1, location.getBlockZ());
+            Location block_loc2 = new Location(player.getWorld(), location.getDirection().getBlockX() + 1, location.getBlockY() - 1, location.getDirection().getBlockZ() + 1);
+
             Block block = block_loc.getBlock();
+            Block block2 = block_loc2.getBlock();
             if (!(block.getType().equals(Material.AIR))) {
                 if (this.basalts_time.containsKey(bridge_basalt.getItemMeta())) {
                     this.basalts_time.remove(bridge_basalt.getItemMeta(), System.currentTimeMillis());
@@ -389,28 +403,38 @@ public class Kills implements Listener {
                     this.basalts_time.put(bridge_basalt.getItemMeta(), System.currentTimeMillis());
                 }
                 else {
-                    long timeElapsed = (System.currentTimeMillis() - this.basalts_time.get(bridge_basalt.getItemMeta())) / 1000;
-                    long timeLeft = 30 - timeElapsed;
-                    if (timeElapsed <= 30) {
-                        block.setType(Material.HAY_BLOCK);
-                        if (timeLeft <= 5 && timeLeft >= 0) {
-                            if ( !(this.lastprint.containsKey(player.getUniqueId())) || (System.currentTimeMillis() - this.lastprint.get(player.getUniqueId()) >= 1000) ) {
-                                player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "YOUR BRIDGE HAY BALE WILL DISAPPEAR IN " + timeLeft +
-                                        " SECONDS!!!");
-                                this.lastprint.put(player.getUniqueId(), System.currentTimeMillis());
+                    if (player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.YELLOW + "" + ChatColor.BOLD + "Bridge Hay Bale")) {
+                        long timeElapsed = (System.currentTimeMillis() - this.basalts_time.get(bridge_basalt.getItemMeta())) / 1000;
+                        long timeLeft = 30 - timeElapsed;
+                        if (timeElapsed <= 30) {
+                            block.setType(Material.HAY_BLOCK);
+                            block2.setType(Material.HAY_BLOCK);
+                            if (timeLeft <= 5 && timeLeft >= 0) {
+                                if ( !(this.lastprint.containsKey(player.getUniqueId())) || (System.currentTimeMillis() - this.lastprint.get(player.getUniqueId()) >= 1000) ) {
+                                    player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "YOUR BRIDGE HAY BALE WILL DISAPPEAR IN " + timeLeft +
+                                            " SECONDS!!!");
+                                    this.lastprint.put(player.getUniqueId(), System.currentTimeMillis());
+                                }
                             }
                         }
-                    }
-                    else {
-                        player.getInventory().remove(player.getInventory().getItemInMainHand());
-                        this.basalts_time.remove(bridge_basalt.getItemMeta());
-                        this.bridge_basalts.remove(bridge_basalt);
+                        else {
+                            player.getInventory().remove(player.getInventory().getItemInMainHand());
+                            this.basalts_time.remove(bridge_basalt.getItemMeta());
+                            this.bridge_basalts.remove(bridge_basalt);
+                        }
                     }
                 }
 
             }
         }
+
     }
+
+    @EventHandler
+    public void playerRespawn (PlayerRespawnEvent event) {
+        event.setRespawnLocation(spawn_loc);
+    }
+
 
 
     @EventHandler
@@ -457,7 +481,7 @@ public class Kills implements Listener {
         }
         else {
             Location entity_location = entity.getLocation();
-            for (int cnt = 0; cnt <= 3; cnt++) {
+            for (int cnt = 0; cnt <= 2; cnt++) {
                 entity.getWorld().dropItemNaturally(entity_location, new ItemStack(Material.END_PORTAL_FRAME));
             }
         }
@@ -465,7 +489,7 @@ public class Kills implements Listener {
 
 
     @EventHandler
-    public void playerInteracting (PlayerInteractEvent event) {
+    public void playerInteracted (PlayerInteractEvent event) {
         Player player = event.getPlayer();
         Action action = event.getAction();
         if (action != Action.RIGHT_CLICK_BLOCK) {
@@ -484,7 +508,7 @@ public class Kills implements Listener {
     }
 
     @EventHandler
-    public void EntitySpawn(VehicleCreateEvent event) {
+    public void VehicleSpawn(VehicleCreateEvent event) {
         Vehicle boat = event.getVehicle();
         Location location = boat.getLocation();
         Location location1 = new Location(location.getWorld(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
@@ -500,7 +524,7 @@ public class Kills implements Listener {
     }
 
     @EventHandler
-    public void anotherMove(PlayerMoveEvent event) {
+    public void anotherMoveThatPlayerDid(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         if (player.isInsideVehicle()) {
             Vehicle vehicle = (Vehicle) player.getVehicle();
@@ -558,13 +582,13 @@ public class Kills implements Listener {
     }
 
     private Material[] lucky_items = new Material[] {
-            /*Material.NETHERITE_LEGGINGS, Material.NETHERITE_AXE, Material.DIAMOND_AXE, Material.DIAMOND_SWORD, Material.NETHERITE_BLOCK,
+            Material.NETHERITE_LEGGINGS, Material.NETHERITE_AXE, Material.DIAMOND_AXE, Material.DIAMOND_SWORD, Material.NETHERITE_BLOCK,
             Material.ENCHANTED_GOLDEN_APPLE, Material.IRON_AXE, Material.ANVIL, Material.TRIDENT, Material.NETHERITE_CHESTPLATE,
             Material.DIAMOND_BLOCK, Material.GOLDEN_SWORD, Material.SMITHING_TABLE, Material.CROSSBOW, Material.FISHING_ROD, Material.IRON_CHESTPLATE,
-            Material.WATER_BUCKET, Material.ENDER_PEARL, Material.BEDROCK, Material.ARROW, Material.RAIL, Material.DIAMOND_HELMET,
+            Material.WATER_BUCKET, Material.BEDROCK, Material.ARROW, Material.RAIL, Material.DIAMOND_HELMET,
             Material.HAY_BLOCK, Material.SLIME_BLOCK, Material.SADDLE, Material.SKELETON_HORSE_SPAWN_EGG, Material.DRAGON_HEAD,
-            Material.ELYTRA, Material.BARRIER, Material.SPAWNER, Material.END_PORTAL_FRAME, Material.OBSIDIAN,
-            Material.POWDER_SNOW_BUCKET, Material.TOTEM_OF_UNDYING, Material.GOLDEN_APPLE,*/ Material.IRON_BOOTS,
+            Material.ELYTRA, Material.BARRIER, Material.SPAWNER, Material.OBSIDIAN,
+            Material.POWDER_SNOW_BUCKET, Material.TOTEM_OF_UNDYING, Material.GOLDEN_APPLE, Material.IRON_BOOTS,
             Material.FIRE_CHARGE,
     };
 
@@ -583,8 +607,8 @@ public class Kills implements Listener {
     ArrayList portals_locs = new ArrayList();
 
     private String[] random_occurrences = new String[] {
-            "summon lightning", "make an arrow rain", "build the rainbow penis", "spawn a tanky skeleton",
-            "spawn a wool bridge", "spawn a wool bridge", "give player a fly boat", "make a portal"
+            "build the rainbow penis", "spawn a tanky skeleton", "make a portal",
+            "spawn a wool bridge", "give player a fly boat",
     };
 
     private Material[] armor = new Material[] {
@@ -650,6 +674,6 @@ public class Kills implements Listener {
     }
 
     private Integer[] arrays_types = new Integer[] {
-            0, 2,// 1, 2
+            0, 2, 0, 1, 2
     };
 }
