@@ -1,0 +1,4 @@
+name: MinecraftButYouCanOnlyStandOnDirt
+version: '${project.version}'
+main: me.in4.minecraftbutyoucanonlystandondirt.MinecraftButYouCanOnlyStandOnDirt
+api-version: 1.18

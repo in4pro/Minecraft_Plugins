@@ -1,0 +1,4 @@
+name: MinecraftButYouCanOnlyStandOnDirt
+version: '1.0-SNAPSHOT'
+main: me.in4.minecraftbutyoucanonlystandondirt.MinecraftButYouCanOnlyStandOnDirt
+api-version: 1.18

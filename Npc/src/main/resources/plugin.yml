@@ -1,0 +1,13 @@
+name: Npc
+version: '${project.version}'
+main: me.in4.npc.Npc
+api-version: 1.19
+depend: [ProtocolLib]
+commands:
+  create:
+    description: creates the bot and the mob
+    usage: /command
+  remove:
+    description: removes the bot and the mob
+    usage: /command
+

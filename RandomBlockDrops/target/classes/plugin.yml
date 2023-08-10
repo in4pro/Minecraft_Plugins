@@ -1,0 +1,4 @@
+name: RandomDrops
+version: '1.0-SNAPSHOT'
+main: me.in4.randomdrops.RandomDrops
+api-version: 1.19

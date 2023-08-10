@@ -1,0 +1,11 @@
+name: VoidFightZ
+version: '${project.version}'
+main: me.in4.voidfightz.VoidFightZ
+api-version: 1.19
+commands:
+  voidfightz:
+    description: teleports you to the VoidWorld
+    usage: /<command>
+  invulnerable:
+    description: makes every1 invulnerable
+    usage: /<command>

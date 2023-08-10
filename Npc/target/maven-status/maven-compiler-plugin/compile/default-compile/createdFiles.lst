@@ -1,0 +1,8 @@
+me/in4/npc/runnables/OneRun.class
+me/in4/npc/bots/Bot.class
+me/in4/npc/bot_classes/MovementClass.class
+me/in4/npc/commands/CreateBot.class
+me/in4/npc/runnables/Updater.class
+me/in4/npc/commands/RemoveBot.class
+me/in4/npc/listeners/EventListeners.class
+me/in4/npc/Npc.class
