@@ -1,0 +1,11 @@
+name: ChatBot
+version: '1.0-SNAPSHOT'
+main: me.in4.chatbot.ChatBot
+api-version: 1.19
+commands:
+  spambot:
+    description: /tells everyone
+    usage: /<command>
+  say:
+    description: basically /msg
+    usage: /<command>

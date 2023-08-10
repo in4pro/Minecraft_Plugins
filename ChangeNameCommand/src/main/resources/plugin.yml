@@ -1,0 +1,11 @@
+name: ChangeNameCommand
+version: '${project.version}'
+main: me.in4.changenamecommand.ChangeNameCommand
+api-version: 1.18
+commands:
+  newname:
+    description: Change your name on this server.
+    usage: /<command>
+  resetname:
+    description: resets your name.
+    usage: /<command>
