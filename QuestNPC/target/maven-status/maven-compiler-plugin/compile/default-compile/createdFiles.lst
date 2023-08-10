@@ -1,9 +1,0 @@
-me/in4/questnpc/models/Quest.class
-me/in4/questnpc/QuestNPC.class
-me/in4/questnpc/commands/SpawnNPC.class
-me/in4/questnpc/managers/QuestManager.class
-me/in4/questnpc/QuestNPC$1.class
-me/in4/questnpc/models/KillsQuest.class
-me/in4/questnpc/models/ItemQuest.class
-me/in4/questnpc/menus/QuestMenu.class
-me/in4/questnpc/managers/NPCManager.class

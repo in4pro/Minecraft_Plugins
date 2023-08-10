@@ -1,9 +1,0 @@
-name: QuestNPC
-version: '${project.version}'
-main: me.in4.questnpc.QuestNPC
-api-version: 1.18
-depend:
-  - ProtocolLib
-commands:
-  gagloevquester:
-    description: spawns a gag
